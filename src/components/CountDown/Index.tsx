@@ -1,13 +1,5 @@
-import { TimerIcon } from "lucide-react";
 import styles from "./Styles.module.css";
 
-export function Logo() {
-  return (
-    <div className={styles.logo}>
-      <a className={styles.logoLink} href="#">
-        <TimerIcon />
-        <span>Chronos</span>
-      </a>
-    </div>
-  );
+export function CountDown() {
+  return <div className={styles.container}>00:00</div>;
 }
