@@ -1,4 +1,4 @@
-import { PlayCircleIcon } from "lucide-react";
+import { PlayCircleIcon, StopCircleIcon } from "lucide-react";
 import { Cycles } from "../Cycles/inde";
 import { DefautButton } from "../DefautButton";
 import { DefautInput } from "../DefautInput";
@@ -8,10 +8,11 @@ import type { TaskModel } from "../../Models/TaskModels";
 import { useTaskContext } from "../../Contexts/TaskContext/UseTaskContext";
 import { getNextCycle } from "../../Utils/GetNextCycle";
 import { getNextCycleType } from "../../Utils/GetNextCycleType";
-import { formatSecondsToMinutes } from "../../Utils/FormatSecondsToMinutes";
+import { TaskActionTypes } from "../../Contexts/TaskContext/TaskActions";
+import { Tips } from "../../Tips";
 
 export function MainForm() {
-  const { state, setState } = useTaskContext();
+  const { state, dispatch } = useTaskContext();
 
   const taskNameInput = useRef<HTMLInputElement>(null);
 
@@ -39,20 +40,14 @@ export function MainForm() {
       duration: state.config[nextCycleType],
       type: nextCycleType,
     };
-    const secondsRemaning = newTask.duration * 60;
 
-    setState((prevState) => {
-      return {
-        ...prevState,
-        config: { ...prevState.config },
-        activeTask: newTask,
-        currentCycle: nextCycle,
-        secondsRemaning, //conferir
-        formattedSecondsRemaning: formatSecondsToMinutes(secondsRemaning),
-        tasks: [...prevState.tasks, newTask],
-      };
-    });
+    dispatch({ type: TaskActionTypes.START_TASK, payload: newTask });
   }
+
+  function handleInterruptTask() {
+    dispatch({ type: TaskActionTypes.INTERRUPT_TASK });
+  }
+
   return (
     <form onSubmit={handleCreateNewTask} className="form" action="">
       <div className="formRow">
@@ -62,11 +57,12 @@ export function MainForm() {
           labelText="task"
           placeholder="Digite Algo"
           ref={taskNameInput}
+          disabled={!!state.activeTask}
         />
       </div>
 
       <div className="formRow">
-        <p>O proximo intervalo é de 25min</p>
+        <Tips />
       </div>
 
       {state.currentCycle > 0 && (
@@ -76,7 +72,25 @@ export function MainForm() {
       )}
 
       <div className="formRow">
-        <DefautButton icon={<PlayCircleIcon />} />
+        {!state.activeTask ? (
+          <DefautButton
+            aria-label="Iniciar tarefa"
+            title="Iniciar Tarefa"
+            type="submit"
+            icon={<PlayCircleIcon />}
+            key="Este é o botao de iniciar"
+          />
+        ) : (
+          <DefautButton
+            aria-label="Interromper tarefa atual"
+            title="Interromper tarefa atual"
+            type="button"
+            icon={<StopCircleIcon />}
+            color="red"
+            onClick={handleInterruptTask}
+            key="Este é o botao de parar"
+          />
+        )}
       </div>
     </form>
   );
