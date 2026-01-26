@@ -9,7 +9,7 @@ export function Tips() {
 
   // Tips
   const tipsForWhenActiveTask = {
-    workTime: <span>Foque por {state.config.workTime}min</span>,
+    workTime: <span>Foque por {state.config.workTime} min</span>,
     shortBreakTime: <span>Descanse por {state.config.shortBreakTime}min</span>,
     longBreakTime: <span>Descanso longo</span>,
   };
